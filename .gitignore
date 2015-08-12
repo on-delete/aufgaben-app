@@ -8,6 +8,7 @@
 bin/
 tmp/
 target/
+db/
 *.tmp
 *.bak
 *.swp
