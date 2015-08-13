@@ -17,6 +17,12 @@ public class TodoItem {
 		this.text.set(text);
 	}
 
+	public TodoItem(int id, String text, boolean status){
+		this.id.set(id);
+		this.text.set(text);
+		this.completed.set(status);
+	}
+
 	public int getId() {
 		return id.get();
 	}

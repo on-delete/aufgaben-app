@@ -3,6 +3,7 @@ package de.saxsys.tasksapp.server.service.task;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.sql.ResultSet;
@@ -39,8 +40,7 @@ public class TaskService extends AbstractVerticle{
 						execute(conn.result(), "INSERT INTO task VALUES (NEXT VALUE FOR t_id_squence, '"+transferObject.getString("task")+"', false);", create -> {
 							query(conn.result(), "SELECT TOP 1 t_id FROM task ORDER BY t_id DESC", rs -> {
 								log.info(rs.getResults().get(0).getList().get(0).toString());
-								msg.reply("{\"id\":\""+rs.getResults().get(0).getList().get(0).toString()+"\"}");
-								client.close();
+								msg.reply("{\"id\":\"" + rs.getResults().get(0).getList().get(0).toString() + "\"}");
 							});
 						});
 					}
@@ -59,9 +59,21 @@ public class TaskService extends AbstractVerticle{
 						msg.fail(500, "");
 					} else {
 							query(conn.result(), "SELECT * FROM task", rs -> {
-								log.info(rs.getResults().get(0).getList().get(0).toString());
-								msg.reply("{\"id\":\"" + rs.getResults().get(0).getList().get(0).toString() + "\"}");
-								client.close();
+								JsonObject resultObject = new JsonObject();
+								JsonArray array = new JsonArray();
+
+								rs.getResults().forEach(resultSet -> {
+									JsonObject tempResult = new JsonObject();
+									tempResult.put("id", resultSet.getList().get(0).toString());
+									tempResult.put("title", resultSet.getList().get(1).toString());
+									tempResult.put("status", resultSet.getList().get(2).toString());
+									array.add(tempResult);
+								});
+
+								resultObject.put("tasks", array);
+
+								log.info(resultObject.toString());
+								msg.reply(resultObject.toString());
 							});
 					}
 				});

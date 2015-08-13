@@ -11,11 +11,19 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.fluent.Async;
+import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
+import org.apache.http.concurrent.FutureCallback;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * @author manuel.mauky
@@ -41,22 +49,54 @@ public class ItemOverviewViewModel implements ViewModel {
 		notificationCenter.subscribe("showAll", (key, payload) -> showAllItems());
 		notificationCenter.subscribe("showActive", (key, payload) -> showActiveItems());
 		notificationCenter.subscribe("showCompleted", (key, payload) -> showCompletedItems());
-
-		//allItems.getModelList().add()
 	}
 
 	public void initItemList(){
-		try {
-			String result = Request.Get("http://localhost:3420/getAllTasks")
+		//try {
+			ExecutorService threadpool = Executors.newFixedThreadPool(2);
+		Async.newInstance();
+			Async async = Async.newInstance().use(threadpool);
+
+			Request[] requests = new Request[] {
+					Request.Get("http://localhost:3420/getAllTasks")
+			};
+
+			Queue<Future<Content>> queue = new LinkedList<>();
+			for (final Request request: requests) {
+				Future<Content> future = async.execute(request, new FutureCallback<Content>() {
+
+					public void failed(final Exception ex) {
+						System.out.println(ex.getMessage() + ": " + request);
+					}
+
+					public void completed(final Content content) {
+						JSONArray resultArray = new JSONObject(content.toString()).getJSONArray("tasks");
+						for(int i=0; i<resultArray.length(); i++){
+							JSONObject tempItem = (JSONObject)resultArray.get(i);
+							allItems.getModelList().add(new TodoItem(tempItem.getInt("id"), tempItem.getString("title"), tempItem.getBoolean("status")));
+						}
+					}
+
+					public void cancelled() {
+					}
+
+				});
+				queue.add(future);
+			//}
+
+			/*String result = Request.Get("http://localhost:3420/getAllTasks")
 					.version(HttpVersion.HTTP_1_1)
 					.execute().returnContent().asString();
 
-			JSONObject json = new JSONObject(result);
-			System.out.println(json.toString());
+			JSONArray resultArray = new JSONObject(result).getJSONArray("tasks");
+			for(int i=0; i<resultArray.length(); i++){
+				JSONObject tempItem = (JSONObject)resultArray.get(i);
+				allItems.getModelList().add(new TodoItem(tempItem.getInt("id"), tempItem.getString("title"), tempItem.getBoolean("status")));
+			}*/
 		}
-		catch (IOException e){
+		/*catch (IOException e){
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	private void showAllItems() {
