@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="de.saxsys.tasksapp.ui.MainView">
+  <tabs>
+    <Tab text="Tasks">
+      <content>
+        <fx:include source="TasksTabView.fxml"/>
+      </content>
+    </Tab>
+    <Tab text="Auswertung">
+    </Tab>
+  </tabs>
+</TabPane>
