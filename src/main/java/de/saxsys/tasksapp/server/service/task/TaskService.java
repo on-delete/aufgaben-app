@@ -83,6 +83,24 @@ public class TaskService extends AbstractVerticle{
 				msg.fail(500, "");
 			}
 		});
+		eventBus.consumer("updateTaskStatus", msg -> {
+			try {
+				JsonObject transferObject = (JsonObject) msg.body();
+
+				client.getConnection(conn -> {
+					if (conn.failed()) {
+						log.log(Level.WARNING, "Connection to database failed + " + conn.cause().getMessage());
+						msg.fail(500, "");
+					} else {
+						execute(conn.result(), "UPDATE task SET t_status = " + transferObject.getString("status") + " WHERE t_id=" + transferObject.getString("taskId") + ";", create -> msg.reply(""));
+					}
+				});
+			} catch (RuntimeException e) {
+				log.log(Level.WARNING, "Internal Error " + e.getMessage());
+				e.printStackTrace();
+				msg.fail(500, "");
+			}
+		});
 	}
 	private void execute(SQLConnection conn, String sql, Handler<Void> done) {
 		conn.execute(sql, res -> {
