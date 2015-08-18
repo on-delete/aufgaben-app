@@ -7,6 +7,7 @@ import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import de.saxsys.tasksapp.model.TodoItem;
 import de.saxsys.tasksapp.model.TodoItemStore;
 import de.saxsys.tasksapp.ui.FilterHelper;
+import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
@@ -19,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.management.PlatformLoggingMXBean;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -52,51 +54,25 @@ public class ItemOverviewViewModel implements ViewModel {
 	}
 
 	public void initItemList(){
-		//try {
-			ExecutorService threadpool = Executors.newFixedThreadPool(2);
-		Async.newInstance();
-			Async async = Async.newInstance().use(threadpool);
 
-			Request[] requests = new Request[] {
-					Request.Get("http://localhost:3420/getAllTasks")
-			};
+		Async.newInstance().execute(Request.Get("http://localhost:3420/getAllTasks"), new FutureCallback<Content>() {
+			public void failed(final Exception ex) {
+				System.out.println(ex.getMessage());
+			}
 
-			Queue<Future<Content>> queue = new LinkedList<>();
-			for (final Request request: requests) {
-				Future<Content> future = async.execute(request, new FutureCallback<Content>() {
-
-					public void failed(final Exception ex) {
-						System.out.println(ex.getMessage() + ": " + request);
+			public void completed(final Content content) {
+				Platform.runLater(() -> {
+					JSONArray resultArray = new JSONObject(content.toString()).getJSONArray("tasks");
+					for (int i = 0; i < resultArray.length(); i++) {
+						JSONObject tempItem = (JSONObject) resultArray.get(i);
+						allItems.getModelList().add(new TodoItem(tempItem.getInt("id"), tempItem.getString("title"), tempItem.getBoolean("status")));
 					}
-
-					public void completed(final Content content) {
-						JSONArray resultArray = new JSONObject(content.toString()).getJSONArray("tasks");
-						for(int i=0; i<resultArray.length(); i++){
-							JSONObject tempItem = (JSONObject)resultArray.get(i);
-							allItems.getModelList().add(new TodoItem(tempItem.getInt("id"), tempItem.getString("title"), tempItem.getBoolean("status")));
-						}
-					}
-
-					public void cancelled() {
-					}
-
 				});
-				queue.add(future);
-			//}
+			}
 
-			/*String result = Request.Get("http://localhost:3420/getAllTasks")
-					.version(HttpVersion.HTTP_1_1)
-					.execute().returnContent().asString();
-
-			JSONArray resultArray = new JSONObject(result).getJSONArray("tasks");
-			for(int i=0; i<resultArray.length(); i++){
-				JSONObject tempItem = (JSONObject)resultArray.get(i);
-				allItems.getModelList().add(new TodoItem(tempItem.getInt("id"), tempItem.getString("title"), tempItem.getBoolean("status")));
-			}*/
-		}
-		/*catch (IOException e){
-			e.printStackTrace();
-		}*/
+			public void cancelled() {
+			}
+		});
 	}
 
 	private void showAllItems() {
