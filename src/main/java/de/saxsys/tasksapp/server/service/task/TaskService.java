@@ -8,6 +8,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
+import io.vertx.ext.sql.UpdateResult;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -72,7 +73,6 @@ public class TaskService extends AbstractVerticle{
 
 								resultObject.put("tasks", array);
 
-								log.info(resultObject.toString());
 								msg.reply(resultObject.toString());
 							});
 					}
@@ -92,7 +92,7 @@ public class TaskService extends AbstractVerticle{
 						log.log(Level.WARNING, "Connection to database failed + " + conn.cause().getMessage());
 						msg.fail(500, "");
 					} else {
-						execute(conn.result(), "UPDATE task SET t_status = " + transferObject.getString("status") + " WHERE t_id=" + transferObject.getString("taskId") + ";", create -> msg.reply(""));
+						update(conn.result(), "UPDATE task SET t_status = " + transferObject.getString("status") + " WHERE t_id=" + transferObject.getString("taskId") + ";", create -> msg.reply(""));
 					}
 				});
 			} catch (RuntimeException e) {
@@ -122,4 +122,13 @@ public class TaskService extends AbstractVerticle{
 		});
 	}
 
+	private void update(SQLConnection conn, String sql, Handler<UpdateResult> done){
+		conn.update(sql, res -> {
+			if(res.failed()) {
+				throw new RuntimeException(res.cause());
+			}
+
+			done.handle(res.result());
+		});
+	}
 }

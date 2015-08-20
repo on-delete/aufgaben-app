@@ -37,7 +37,7 @@ public class ItemViewModel implements ViewModel {
 		completed.addListener((observable, oldValue, newValue) -> {
 			Async.newInstance().execute(Request.Put("http://localhost:3420/updateTaskStatus")
 					.version(HttpVersion.HTTP_1_1)
-					.bodyString("{\"taskId\":\"" + this.item.getId() + "\", \"status:\":\""+newValue+"\"};", ContentType.APPLICATION_JSON), new FutureCallback<Content>() {
+					.bodyString("{\"taskId\":\"" + this.item.getId() + "\", \"status\":\""+newValue+"\"};", ContentType.APPLICATION_JSON), new FutureCallback<Content>() {
 				public void failed(final Exception ex) {
 					System.out.println(ex.getMessage());
 				}

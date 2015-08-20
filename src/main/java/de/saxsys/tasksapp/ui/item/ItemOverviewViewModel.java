@@ -11,21 +11,12 @@ import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
-import org.apache.http.HttpVersion;
 import org.apache.http.client.fluent.Async;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.concurrent.FutureCallback;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.lang.management.PlatformLoggingMXBean;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * @author manuel.mauky
