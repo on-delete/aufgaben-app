@@ -12,23 +12,13 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 import de.saxsys.mvvmfx.ViewModel;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.fluent.Async;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 /**
  * @author manuel.mauky
@@ -54,9 +44,6 @@ public class AddItemsViewModel implements ViewModel {
     public void addItem() {
         final String newValue = newItemValue.get();
         if (newValue != null && !newValue.trim().isEmpty()) {
-            //TodoItem newItem = new TodoItem(newValue);
-            //TodoItemStore.getInstance().getItems().add(newItem);
-
             Async.newInstance().execute(Request.Post("http://localhost:3420/addTask")
                     .version(HttpVersion.HTTP_1_1)
                     .bodyString("{\"task\":\"" + newValue + "\"};", ContentType.APPLICATION_JSON), new FutureCallback<Content>() {

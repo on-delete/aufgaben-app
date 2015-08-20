@@ -10,7 +10,6 @@ import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.sql.UpdateResult;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -101,6 +100,24 @@ public class TaskService extends AbstractVerticle{
 				msg.fail(500, "");
 			}
 		});
+		eventBus.consumer("deleteTask", msg -> {
+			try {
+				String taskId = msg.body().toString();
+
+				client.getConnection(conn -> {
+					if (conn.failed()) {
+						log.log(Level.WARNING, "Connection to database failed + " + conn.cause().getMessage());
+						msg.fail(500, "");
+					} else {
+						update(conn.result(), "DELETE FROM task WHERE t_id=" + taskId +";", create -> msg.reply(""));
+					}
+				});
+			} catch (RuntimeException e) {
+				log.log(Level.WARNING, "Internal Error " + e.getMessage());
+				e.printStackTrace();
+				msg.fail(500, "");
+			}
+		});
 	}
 	private void execute(SQLConnection conn, String sql, Handler<Void> done) {
 		conn.execute(sql, res -> {
@@ -124,7 +141,7 @@ public class TaskService extends AbstractVerticle{
 
 	private void update(SQLConnection conn, String sql, Handler<UpdateResult> done){
 		conn.update(sql, res -> {
-			if(res.failed()) {
+			if (res.failed()) {
 				throw new RuntimeException(res.cause());
 			}
 

@@ -5,16 +5,12 @@ import de.saxsys.tasksapp.model.TodoItem;
 import de.saxsys.tasksapp.model.TodoItemStore;
 import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.fluent.Async;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ContentType;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * @author manuel.mauky
@@ -37,7 +33,7 @@ public class ItemViewModel implements ViewModel {
 		completed.addListener((observable, oldValue, newValue) -> {
 			Async.newInstance().execute(Request.Put("http://localhost:3420/updateTaskStatus")
 					.version(HttpVersion.HTTP_1_1)
-					.bodyString("{\"taskId\":\"" + this.item.getId() + "\", \"status\":\""+newValue+"\"};", ContentType.APPLICATION_JSON), new FutureCallback<Content>() {
+					.bodyString("{\"taskId\":\"" + this.item.getId() + "\", \"status\":\"" + newValue + "\"};", ContentType.APPLICATION_JSON), new FutureCallback<Content>() {
 				public void failed(final Exception ex) {
 					System.out.println(ex.getMessage());
 				}
@@ -53,7 +49,20 @@ public class ItemViewModel implements ViewModel {
 	}
 
 	public void delete() {
-		TodoItemStore.getInstance().getItems().remove(item);
+		Async.newInstance().execute(Request.Delete("http://localhost:3420/deleteTask/" + item.getId())
+				.version(HttpVersion.HTTP_1_1), new FutureCallback<Content>() {
+			public void failed(final Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+
+			public void completed(final Content content) {
+				System.out.println("Task gelöscht!");
+				Platform.runLater(() -> TodoItemStore.getInstance().getItems().remove(item));
+			}
+
+			public void cancelled() {
+			}
+		});
 	}
 
 	public StringProperty contentProperty() {

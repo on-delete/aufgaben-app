@@ -41,6 +41,11 @@ public class TasksServiceServer extends AbstractVerticle {
             eventBus.send("updateTaskStatus", request, result -> sendResponseWithoutBody(result, routingContext));
         });
 
+        router.route(HttpMethod.DELETE, "/deleteTask/:taskId").handler(routingContext -> {
+            String taskId = routingContext.request().getParam("taskId");
+            eventBus.send("deleteTask", taskId, result -> sendResponseWithoutBody(result, routingContext));
+        });
+
         httpServer.requestHandler(router::accept).listen(3420);
     }
 
