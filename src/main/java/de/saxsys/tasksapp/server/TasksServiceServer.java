@@ -80,5 +80,6 @@ public class TasksServiceServer extends AbstractVerticle {
         vertx.deployVerticle(new InitDatabaseVerticle());
         vertx.deployVerticle(new TasksServiceServer());
         vertx.deployVerticle(new TaskService());
+        vertx.deployVerticle(new AnalysisServiceServer());
     }
 }

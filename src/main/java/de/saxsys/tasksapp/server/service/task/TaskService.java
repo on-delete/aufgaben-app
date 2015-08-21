@@ -118,6 +118,41 @@ public class TaskService extends AbstractVerticle{
 				msg.fail(500, "");
 			}
 		});
+		eventBus.consumer("getTaskStatusFromDB", msg ->{
+			try {
+				client.getConnection(conn -> {
+					if (conn.failed()) {
+						log.log(Level.WARNING, "Connection to database failed + " + conn.cause().getMessage());
+						msg.fail(500, "");
+					} else {
+						query(conn.result(), "SELECT " +
+								"(SELECT COUNT(t_status) FROM task WHERE t_status=false) AS openCount," +
+								"(SELECT COUNT(t_status) FROM task WHERE t_status=true) AS doneCount FROM task;", rs ->  {
+
+							System.out.println(rs.getResults());
+							/*JsonObject resultObject = new JsonObject();
+							JsonArray array = new JsonArray();
+
+							rs.getResults().forEach(resultSet -> {
+								JsonObject tempResult = new JsonObject();
+								tempResult.put("id", resultSet.getList().get(0).toString());
+								tempResult.put("title", resultSet.getList().get(1).toString());
+								tempResult.put("status", resultSet.getList().get(2).toString());
+								array.add(tempResult);
+							});
+
+							resultObject.put("tasks", array);
+
+							msg.reply(resultObject.toString());*/
+						});
+					}
+				});
+			} catch (RuntimeException e) {
+				log.log(Level.WARNING, "Internal Error " + e.getMessage());
+				e.printStackTrace();
+				msg.fail(500, "");
+			}
+		});
 	}
 	private void execute(SQLConnection conn, String sql, Handler<Void> done) {
 		conn.execute(sql, res -> {

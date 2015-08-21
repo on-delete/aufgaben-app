@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import java.net.URL?>
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="de.saxsys.tasksapp.ui.MainView">
+<TabPane fx:id="tabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="de.saxsys.tasksapp.ui.MainView">
   <tabs>
     <Tab text="Tasks">
       <content>
@@ -13,6 +13,9 @@
       </content>
     </Tab>
     <Tab text="Auswertung">
+      <content>
+        <fx:include fx:id="analyseTabView" source="AnalyseTabView.fxml"/>
+      </content>
     </Tab>
   </tabs>
 </TabPane>

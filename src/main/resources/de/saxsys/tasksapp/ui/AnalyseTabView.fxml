@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<?import java.net.URL?>
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+	  xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	  fx:controller="de.saxsys.tasksapp.ui.AnalyseTabView">
+	<children>
+		<Label id="title" text="analyse"/>
+		<fx:include fx:id="pieChartView" source="analyse/PieChartView.fxml"/>
+	</children>
+	<stylesheets>
+		<URL value="@main.css"/>
+	</stylesheets>
+</VBox>
