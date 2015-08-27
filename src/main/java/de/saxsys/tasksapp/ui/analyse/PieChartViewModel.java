@@ -34,8 +34,8 @@ public class PieChartViewModel implements ViewModel {
 				Platform.runLater(() -> {
 					taskChartData.clear();
 					JSONObject json = new JSONObject(content.toString());
-					taskChartData.add(new PieChart.Data("Finished", Integer.getInteger(json.get("finished").toString())));
-					taskChartData.add(new PieChart.Data("Open", Integer.getInteger(json.get("open").toString())));
+					taskChartData.add(new PieChart.Data("Finished", json.getInt("doneCount")));
+					taskChartData.add(new PieChart.Data("Open", json.getInt("openCount")));
 				});
 			}
 
