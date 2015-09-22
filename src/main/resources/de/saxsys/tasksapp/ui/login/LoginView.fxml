@@ -14,7 +14,7 @@
                <children>
                   <VBox prefHeight="69.0" prefWidth="100.0">
                      <children>
-                        <RadioButton fx:id="onlineRadioButton" mnemonicParsing="false" selected="true" text="Online">
+                        <RadioButton fx:id="onlineRadioButton" onAction="#setOnline" mnemonicParsing="false" selected="true" text="Online">
                            <toggleGroup>
                               <ToggleGroup fx:id="toggleGroup" />
                            </toggleGroup>
@@ -22,7 +22,7 @@
                               <Insets bottom="10.0" />
                            </padding>
                         </RadioButton>
-                        <RadioButton fx:id="localRadioButton" mnemonicParsing="false" text="Local" toggleGroup="$toggleGroup" />
+                        <RadioButton fx:id="localRadioButton" onAction="#setLocal" mnemonicParsing="false" text="Local" toggleGroup="$toggleGroup" />
                      </children>
                      <padding>
                         <Insets left="20.0" top="20.0" />
@@ -34,8 +34,8 @@
                         <PasswordField fx:id="passwordField" promptText="Password" />
                         <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                            <children>
-                              <Button fx:id="closeButton" mnemonicParsing="false" text="Close" />
-                              <Button fx:id="loginButton" mnemonicParsing="false" text="Login" />
+                              <Button fx:id="closeButton" onAction="#close" mnemonicParsing="false" text="Close" />
+                              <Button fx:id="loginButton" onAction="#login" mnemonicParsing="false" text="Login" />
                            </children>
                         </HBox>
                      </children>

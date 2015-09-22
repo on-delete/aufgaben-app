@@ -1,7 +1,11 @@
 package de.saxsys.tasksapp;
 
+import de.saxsys.mvvmfx.MvvmFX;
+import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import de.saxsys.tasksapp.controller.ViewController;
 import de.saxsys.tasksapp.ui.MainView;
 import de.saxsys.tasksapp.ui.TasksTabView;
+import de.saxsys.tasksapp.ui.login.LoginView;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,11 +24,12 @@ public class App extends Application {
 	
 	@Override
 	public void start(Stage stage) throws Exception {
+		ViewController viewController = new ViewController(stage);
+
+		NotificationCenter notificationCenter = MvvmFX.getNotificationCenter();
+		notificationCenter.publish("showLoginView");
+
 		stage.setTitle("TodoMVVM");
-		
-		final Parent parent = FluentViewLoader.fxmlView(MainView.class).load().getView();
-		
-		stage.setScene(new Scene(parent));
 		stage.setResizable(false);
 		stage.show();
 	}
