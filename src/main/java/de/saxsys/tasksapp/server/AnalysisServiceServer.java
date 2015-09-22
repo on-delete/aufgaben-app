@@ -33,18 +33,6 @@ public class AnalysisServiceServer extends AbstractVerticle {
 		vertx.deployVerticle(new AnalysisService());
 	}
 
-	private void sendResponseWithoutBody(AsyncResult<Message<Object>> result, RoutingContext routingContext) {
-		HttpServerResponse response = routingContext.response();
-		response.putHeader("content-type", "text/plain");
-		if (result.failed()) {
-			response.setStatusCode(500);
-			response.end("Internal Error!");
-		} else {
-			response.setStatusCode(200);
-			response.end("Success!");
-		}
-	}
-
 	private void sendResponseWithBody(AsyncResult<Message<Object>> result, RoutingContext routingContext) {
 		HttpServerResponse response = routingContext.response();
 		if (result.failed()) {
