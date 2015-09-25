@@ -2,6 +2,7 @@ package de.saxsys.tasksapp.ui.item;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -69,13 +70,19 @@ public class ItemView implements FxmlView<ItemViewModel> {
 
 
 		viewModel.textStrikeThrough().addListener((obs, oldV, newV) -> {
-			if (newV) {
-				contentLabel.getStyleClass().add(STRIKETHROUGH_CSS_CLASS);
-			} else {
-				contentLabel.getStyleClass().remove(STRIKETHROUGH_CSS_CLASS);
-			}
+			Platform.runLater(() -> {
+                if (newV) {
+                    contentLabel.getStyleClass().add(STRIKETHROUGH_CSS_CLASS);
+                } else {
+                    contentLabel.getStyleClass().remove(STRIKETHROUGH_CSS_CLASS);
+                }
+            });
+
 		});
 
+		if(viewModel.completedProperty().getValue()){
+			contentLabel.getStyleClass().add(STRIKETHROUGH_CSS_CLASS);
+		}
 	}
 
 	public void delete() {
